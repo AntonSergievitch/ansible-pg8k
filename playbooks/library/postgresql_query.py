@@ -11,7 +11,6 @@
 # License: please see above
 
 from __future__ import (absolute_import, division, print_function)
-
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
@@ -174,6 +173,7 @@ rowcount:
     sample: 5
 '''
 
+
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.postgres import (
     connect_to_db,
@@ -182,7 +182,6 @@ from ansible.module_utils.postgres import (
 )
 from ansible.module_utils._text import to_native
 from ansible.module_utils.six import iteritems
-
 
 # ===========================================
 # Module execution.
@@ -274,7 +273,6 @@ def main():
     conn_params = get_conn_params(module, module.params)
     db_connection = connect_to_db(module, conn_params, autocommit=autocommit)
     cursor = db_connection.cursor()
-    cursor.paramstyle="pyformat"
 
     # Prepare args:
     if module.params.get("positional_args"):
@@ -296,13 +294,17 @@ def main():
         module.fail_json(msg="Cannot execute SQL '%s' %s: %s" % (query, arguments, to_native(e)))
     statusmessage = cursor.connection.statusmessage
     rowcount = cursor.rowcount
-    changed = False
+#    query_result = []
+#
+#    module.warn('Status message: %s with rowcount %d' % (statusmessage, rowcount))
+#    module.warn('Rowcount %s %d' % (str(type(rowcount)),rowcount))
+#    module.warn('Cursor description %s' % (str(cursor.description)))
     if rowcount != 0 and rowcount is not None and cursor.description is not None:
         try:
-            #            module.warn('Show object  %s' % str(type(cursor.description)))
+#            module.warn('Show object  %s' % str(type(cursor.description)))
             keys = [k[0] for k in cursor.description]
-            #            module.warn('Keys %s' % str(type(keys)))
-            query_result = [dict(zip(keys, row)) for row in cursor.fetchall()]
+#            module.warn('Keys %s' % str(type(keys)))
+            query_result = [dict(zip(keys,row)) for row in cursor.fetchall()]
         except db_connection.ProgrammingError as e:
             if to_native(e) == 'no results to fetch':
                 query_result = {}
@@ -312,6 +314,8 @@ def main():
             module.fail_json(msg="Cannot fetch rows from cursor: %s" % to_native(e))
     else:
         query_result = {}
+
+    changed = False
 
     if 'SELECT' not in statusmessage:
         if 'UPDATE' in statusmessage or 'INSERT' in statusmessage or 'DELETE' in statusmessage:
@@ -341,7 +345,7 @@ def main():
         query = query,
         statusmessage = statusmessage,
         query_result = query_result,
-        rowcount = rowcount if rowcount >= 0 else 0,
+        rowcount=rowcount if rowcount >= 0 else 0,
     )
 
     cursor.close()

@@ -662,7 +662,7 @@ def array_inspect(array):
     try:
         return PY_TYPES[array_oid]
     except KeyError:
-        raise InterfaceError("array oid {array_oid} not supported".format(array_oid))
+        raise InterfaceError("array oid {} not supported".format(array_oid))
 
 
 def _make_array_out(ar, adapter_f):

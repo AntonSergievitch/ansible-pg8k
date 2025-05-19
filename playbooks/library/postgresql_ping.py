@@ -95,11 +95,11 @@ class PgPing(object):
         return (self.is_available, self.version)
 
     def get_pg_version(self):
-        query = "SELECT version()"
+        query = "SELECT current_setting('server_version')"
         raw = exec_sql(self, query, add_to_executed=False)[0][0]
         if raw:
             self.is_available = True
-            raw = raw.split()[1].split('.')
+            raw = raw.split('.')
             self.version = dict(
                 major=int(raw[0]),
                 minor=int(raw[1]),

@@ -107,9 +107,9 @@ def connect_to_db(module, conn_params, autocommit=False, fail_on_conn=True):
         if autocommit:
             db_connection.autocommit = True
         version_tuple_str = [tple[1] for tple in db_connection.parameter_statuses if tple[0] == b'server_version'][
-            0].decode('utf-8')
+            0].decode('utf-8').split(' ')[0]
         version_list = (version_tuple_str.split('.') + [0])[0:3]
-        db_connection.server_version = int(''.join(["{:02}".format(int(x)) for x in version_list]))
+        db_connection.server_version = int(''.join(["{:02}".format(int(x)) if str(x).isdigit() else '' for x in version_list]))
         # Switch role, if specified:
         if module.params.get('session_role'):
             cursor = db_connection.cursor()

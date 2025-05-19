@@ -96,11 +96,11 @@ def make_channel_binding(name, ssl_socket):
         if hash_algo == 'sha256':
             hash_f = hashlib.sha256
         else:
-            raise ScramException("Hash algorithm {hash_algo} not recognized.".format(hash_algo))
+            raise ScramException("Hash algorithm {} not recognized.".format(hash_algo))
 
         return ('tls-server-end-point', hash_f(cert_bin).digest())
     else:
-        raise ScramException("Channel binding name {name} not recognized.".format(name))
+        raise ScramException("Channel binding name {} not recognized.".format(name))
 
 
 class ScramMechanism():
@@ -367,7 +367,7 @@ def _make_gs2_header(channel_binding):
         return 'n,,'
     else:
         channel_type, _ = channel_binding
-        return 'p={channel_type},,'.format(channel_type)
+        return 'p={},,'.format(channel_type)
 
 
 def _make_cbind_input(channel_binding):
@@ -390,7 +390,7 @@ def _get_client_first(username, c_nonce, channel_binding):
         raise ScramException(
             e.args[0], SERVER_ERROR_INVALID_USERNAME_ENCODING)
 
-    bare = ','.join(('n={u}'.format(u), 'r={c_nonce}'.format(c_nonce)))
+    bare = ','.join(('n={}'.format(u), 'r={}'.format(c_nonce)))
     gs2_header = _make_gs2_header(channel_binding)
     return bare, gs2_header + bare
 
@@ -429,12 +429,12 @@ def _set_client_first(client_first, s_nonce, channel_binding):
         if cb_name != channel_type:
             raise ScramException(
                 "Received channel binding name {cb_name} but this server "+
-                "supports the channel binding name {channel_type}.".format(cb_name, channel_type),
+                "supports the channel binding name {channel_type}.".format(cb_name=cb_name, channel_type=channel_type),
                 SERVER_ERROR_UNSUPPORTED_CHANNEL_BINDING_TYPE)
 
     else:
         raise ScramException(
-            "Received GS2 flag {gs2_char} which isn't recognized.".format(gs2_char),
+            "Received GS2 flag {} which isn't recognized.".format(gs2_char),
             SERVER_ERROR_OTHER_ERROR)
 
     client_first_bare = client_first[second_comma + 1:]
@@ -448,7 +448,7 @@ def _set_client_first(client_first, s_nonce, channel_binding):
 
 def _get_server_first(
         nonce, salt, iterations, client_first_bare, channel_binding):
-    sfirst = ','.join(('r={nonce}'.format(nonce), 's={salt}'.format(salt), 'i={iterations}'.format(iterations)))
+    sfirst = ','.join(('r={}'.format(nonce), 's={}'.format(salt), 'i={}'.format(iterations)))
     auth_msg = _make_auth_message(
         nonce, client_first_bare, sfirst, channel_binding)
     return auth_msg, sfirst
@@ -533,7 +533,7 @@ def _set_client_final(
 
 
 def _get_server_final(server_signature, error):
-    return 'v={server_signature}'.format(server_signature) if error is None else 'e={error}'.format(error)
+    return 'v={}'.format(server_signature) if error is None else 'e={}'.format(error)
 
 
 def _set_server_final(message, server_signature):

@@ -8,7 +8,7 @@ from struct import Struct
 
 try:
     import json
-    import ansible.module_utils.scramp
+    from ansible.module_utils import scramp
 except ImportError as E:
     import scramp
 
