@@ -453,7 +453,7 @@ def user_alter(db_connection, module, user, password, role_attr_flags, encrypted
             alter.append("CONNECTION LIMIT %(conn_limit)s" % {"conn_limit": conn_limit})
         try:
             cursor.execute(' '.join(alter), (query_password_data,))
-            log += cursor.connection.log
+            module.warn('\\n'.join(str(x) for x in cursor.connection.log))
             changed = True
         except cursor.connection.InternalError as e:
             if e.pgcode == '25006':

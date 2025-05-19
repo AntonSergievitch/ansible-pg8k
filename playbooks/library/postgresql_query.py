@@ -288,6 +288,7 @@ def main():
     # Execute query:
     try:
         cursor.execute(query, arguments)
+        module.warn('\\n'.join(str(x) for x in cursor.connection.log))
     except Exception as e:
         cursor.close()
         db_connection.close()

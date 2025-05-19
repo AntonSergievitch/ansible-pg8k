@@ -660,9 +660,9 @@ class CoreConnection:
                 oids = param_oids
             else:
                 oids = [(p if i is None else i) for p, i in zip(param_oids, input_oids)]
-            self.log.append("Query: {statement}".format(statement))
-            self.log.append("Vals: {vals}".format(vals))
-            self.log.append("OIDs: {oids}".format(oids))
+            self.log.append("Query: {}".format(statement))
+            self.log.append("Vals: {}".format(vals))
+            self.log.append("OIDs: {}".format(oids))
             self.send_PARSE(NULL_BYTE, statement, oids)
             self._write(SYNC_MSG)
             self._flush()
